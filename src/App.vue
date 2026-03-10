@@ -2,10 +2,17 @@
 import { ref } from 'vue';
 const tarefas = ref(['Tarefa 1', 'tarefa 2', 'tarefa 3']);
 const novaTarefa = ref('');
+const posAlternada = ref(-1);
 
 function addTarefa() {
-  if(novaTarefa.value.trim().length >= 5) {
-    tarefas.value.push(novaTarefa.value);
+  if (posAlternada.value == -1) {
+    if(novaTarefa.value.trim().length >= 5) {
+      tarefas.value.push(novaTarefa.value);
+    }
+  }
+  else {
+    tarefas.value.splice(posAlternada.value, 1, novaTarefa.value);
+    posAlternada.value = -1;
   }
   novaTarefa.value = '';
 }
@@ -16,8 +23,9 @@ function delTarefa(item) {
 function ordenarTarefa() {
   tarefas.value.sort();
 }
-function ediTarefa() {
-
+function ediTarefa(item) {
+  posAlternada.value = tarefas.value.indexOf(item);
+  novaTarefa.value = item;
 }
 </script>
 
@@ -26,7 +34,6 @@ function ediTarefa() {
   <h1>Lista de Tarefas</h1>
   <input type="text" v-model="novaTarefa">
   <button @click="addTarefa">Add</button>
-  <button @click="ordenarTarefa">Ordenar</button>
   <ul>
     <li v-for="tarefa in tarefas" :key="tarefa">
       {{ tarefa }}
@@ -36,6 +43,7 @@ function ediTarefa() {
       </span>
     </li>
   </ul>
+  <button @click="ordenarTarefa">Ordenar</button>
 </div>
 </template>
 
